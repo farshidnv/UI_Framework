@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:Framework.UI.Resources.Styles">
+    
+    <SolidColorBrush x:Key="ForegroundBrush" Color="#ff53b9e5" />
+    
+    <Style x:Key="SubNavigationButtonTextBlockStyle" TargetType="TextBlock">
+        <Style.Setters>
+            <Setter Property="FontFamily" Value="Open SansRegular" />
+            <Setter Property="FontSize" Value="13" />
+            <Setter Property="Foreground" Value="{StaticResource ForegroundBrush}" />
+        </Style.Setters>
+    </Style>
+</ResourceDictionary>

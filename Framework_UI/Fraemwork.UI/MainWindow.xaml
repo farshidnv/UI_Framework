@@ -1,0 +1,206 @@
+﻿<Window x:Class="Framework.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:ignore="http://www.galasoft.ch/ignore"
+        xmlns:firstPage="clr-namespace:Framework.UI.Views.Pages.First"
+        xmlns:secondPage="clr-namespace:Framework.UI.Views.Pages.Second"
+        xmlns:homePage="clr-namespace:Framework.UI.Views.Pages.Home"
+        xmlns:converters="clr-namespace:Framework.UI.Resources.Converters"
+        WindowStyle="None"
+        ResizeMode="CanMinimize"
+        mc:Ignorable="d ignore"
+        Height="600"
+        Width="800"
+        Title="MVVM Light Application Prototype"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary>
+                    <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+                    <converters:BoolToNavButtonTextColor x:Key="BoolToNavTextColor" />
+                </ResourceDictionary>
+                
+                <ResourceDictionary Source="Resources/Styles/NavigationButtonStyle.xaml" />
+                <ResourceDictionary Source="Resources/Styles/SubNavigationButtonStyle.xaml" />
+                <ResourceDictionary Source="Resources/Styles/SubNavigationButtonTextBlockStyle.xaml" />
+                <ResourceDictionary Source="Resources/Styles/HeaderBarButtonStyle.xaml" />
+                <ResourceDictionary Source="Resources/Styles/BackButtonStyle.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Grid x:Name="LayoutRoot">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="Header" Background="#ff2b2c2c" MouseDown="Header_MouseDown">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Orientation="Horizontal">
+         
+                <TextBlock VerticalAlignment="Center" FontSize="16" Text="{Binding TitleText}" Foreground="White" />
+            </StackPanel>
+
+            <StackPanel Orientation="Horizontal" Grid.Column="2">
+                <Button Style="{StaticResource ResourceKey=HeaderBarButtonStyle}" Command="{Binding MinimizeCommand}" Margin="4">
+                    <Image Source="Resources/Icons/Minimize_TEMP.png" Width="24" Height="24" />
+                </Button>
+                <Button Style="{StaticResource ResourceKey=HeaderBarButtonStyle}" Command="{Binding CloseCommand}" Margin="4">
+                    <Image Source="Resources/Icons/Close_TEMP.png" Width="24" Height="24" />
+                </Button>
+            </StackPanel>
+        </Grid>
+
+        <Grid x:Name="Navigation" Grid.Row="1" Height="115">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <RadioButton
+                         IsChecked="{Binding IsFirstPageSelected, Mode=OneWay}"
+                         Style="{StaticResource ResourceKey=NavigationButtonStyle}"
+                         Command="{Binding SetSelectedPageCommand}"
+                         CommandParameter="{Binding FirstPageTitle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding FirstPageTitle}" 
+                               Foreground="{Binding IsFirstPageSelected, Converter={StaticResource BoolToNavTextColor}}" />
+                </StackPanel>
+            </RadioButton>
+            <RadioButton Grid.Column="2" 
+                         IsChecked="{Binding IsHomePageSelected, Mode=OneWay}"
+                         Style="{StaticResource ResourceKey=NavigationButtonStyle}"
+                         Command="{Binding SetSelectedPageCommand}"
+                         CommandParameter="{Binding HomePageTitle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding HomePageTitle}" 
+                               Foreground="{Binding IsHomePageSelected, Converter={StaticResource BoolToNavTextColor}}" />
+                </StackPanel>
+            </RadioButton>
+
+            <RadioButton Grid.Column="1" 
+                         IsChecked="{Binding IsSecondPageSelected, Mode=OneWay}"
+                         Style="{StaticResource ResourceKey=NavigationButtonStyle}"
+                         Command="{Binding SetSelectedPageCommand}"
+                         CommandParameter="{Binding SecondPageTitle}">
+                <StackPanel>
+                    <TextBlock Text="{Binding SecondPageTitle}" 
+                               Foreground="{Binding IsSecondPageSelected, Converter={StaticResource BoolToNavTextColor}}" />
+                </StackPanel>
+            </RadioButton>
+        </Grid>
+
+        <Grid x:Name="SubNavigation" 
+              Grid.Row="2" 
+              Height="40"
+              Visibility="{Binding IsSubNavigationActive, Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+
+            <Button x:Name="ReturnToPreviousPageButton" Command="{Binding GoBackCommand}" Style="{StaticResource ResourceKey=BackButtonStyle}">
+                <TextBlock Text="&lt;&lt;" Margin="25,0,25,0" Foreground="SkyBlue" />
+            </Button>
+
+            <Grid x:Name="FirstPageSubNavigation"
+                  Grid.Column="1"
+                  Visibility="{Binding IsFirstPageSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                
+                <RadioButton x:Name="FirstOverviewSubNavButton"
+                             DataContext="{Binding First, Source={StaticResource Locator}}"
+                             IsChecked="{Binding IsOverviewSubPageSelected, Mode=OneWay}"
+                             Style="{StaticResource ResourceKey=SubNavigationButtonStyle}"
+                             Command="{Binding SetSelectedSubPageCommand}"
+                             CommandParameter="{Binding OverviewSubPageTitle}">
+                    <TextBlock Text="{Binding OverviewSubPageTitle}" 
+                               Style="{StaticResource ResourceKey=SubNavigationButtonTextBlockStyle}" />
+                </RadioButton>
+
+                <RadioButton x:Name="FirstProgramsSubNavButton"
+                             Grid.Column="1"
+                             DataContext="{Binding First, Source={StaticResource Locator}}"
+                             IsChecked="{Binding IsProgramsSubPageSelected, Mode=OneWay}"
+                             Style="{StaticResource ResourceKey=SubNavigationButtonStyle}"
+                             Command="{Binding SetSelectedSubPageCommand}"
+                             CommandParameter="{Binding ProgramsSubPageTitle}">
+                    <TextBlock Text="{Binding ProgramsSubPageTitle}" 
+                               Foreground="#ff4ecdd5" />
+                </RadioButton>
+            </Grid>
+           
+            
+            <Grid x:Name="SecondPageSubNavigation"
+                  Grid.Column="1"
+                  Visibility="{Binding IsSecondPageSelected, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition /> 
+                    <ColumnDefinition /> 
+                </Grid.ColumnDefinitions>
+
+                <RadioButton x:Name="SecondOverviewSubNavButton"
+                             DataContext="{Binding Second, Source={StaticResource Locator}}"
+                             IsChecked="{Binding IsOverviewSubPageSelected, Mode=OneWay}"
+                             Style="{StaticResource ResourceKey=SubNavigationButtonStyle}"
+                             Command="{Binding SetSelectedSubPageCommand}"
+                             CommandParameter="{Binding OverviewSubPageTitle}">
+                    <TextBlock Text="{Binding OverviewSubPageTitle}" 
+                               Foreground="#ff4ecdd5" />
+                </RadioButton>
+
+                <RadioButton x:Name="PhonesSubNavButton"
+                             Grid.Column="1"
+                             DataContext="{Binding Second, Source={StaticResource Locator}}"
+                             IsChecked="{Binding IsPhonesSubPageSelected, Mode=OneWay}"
+                             Style="{StaticResource ResourceKey=SubNavigationButtonStyle}"
+                             Command="{Binding SetSelectedSubPageCommand}"
+                             CommandParameter="{Binding PhonesSubPageTitle}">
+                    <TextBlock Text="{Binding PhonesSubPageTitle}" 
+                               Foreground="#ff4ecdd5" />
+                </RadioButton>
+                
+            </Grid>
+           
+        </Grid>
+        
+        <Grid x:Name="Page" Grid.Row="3">
+            <!-- Each page is wrapped in a container so that we can bind the visibility to a property on the MainViewModel. -->
+            <Grid x:Name="FirstPageContainer" 
+                  Visibility="{Binding IsFirstPageSelected, Converter={StaticResource BooleanToVisibilityConverter}}" >
+                <firstPage:FirstPageView />
+            </Grid>
+            
+            <Grid x:Name="HomePageContainer"
+                  Visibility="{Binding IsHomePageSelected, Converter={StaticResource BooleanToVisibilityConverter}}" >
+                <homePage:HomePageView />
+            </Grid>
+
+            <Grid x:Name="SecondPageContainer"
+                  Visibility="{Binding IsSecondPageSelected, Converter={StaticResource BooleanToVisibilityConverter}}" >
+                <secondPage:SecondPageView />
+            </Grid>
+
+        </Grid>
+
+        <Grid x:Name="Footer" Grid.Row="4">
+            <!-- TODO -->
+        </Grid>
+    </Grid>
+</Window>
